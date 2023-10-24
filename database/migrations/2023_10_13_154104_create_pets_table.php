@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -15,16 +14,18 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('type');
-            $table->string('breed');
-            $table->string('color');
-            $table->string('gender');
-            $table->string('age');
-            $table->string('weight');
+            $table->string('breed')->nullable();
+            $table->string('color')->nullable();
+            $table->string('gender')->nullable();
+            $table->string('age')->nullable();
+            $table->string('weight')->nullable();
             $table->string('description')->nullable();
             $table->string('image')->nullable();
-            $table->string('status');
-            $table->boolean('vaccinated');
-            $table->string('pet_condition');
+            $table->string('status')->nullable();
+            $table->boolean('vaccinated')->nullable();
+            $table->string('pet_condition')->nullable();
+            $table->string('status')->nullable();
+            $table->unsignedBigInteger('behavior_id')->nullable();
 
             $table->timestamps();
         });

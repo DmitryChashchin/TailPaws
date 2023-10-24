@@ -12,6 +12,13 @@ use Illuminate\Http\Request;
 
 class PetController extends Controller
 {
+    private $petService;
+
+    public function __construct(PetService $petService)
+    {
+        $this->petService = $petService;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -31,15 +38,13 @@ class PetController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request      $request,
-                          PetService   $petService,
-                          EventService $eventService)
+    public function store(Request $request)
     {
-
         try {
-            $petService->createPet([
+            $pet = $this->petService->createPet([
                     'name' => $request->name,
                     'type' => $request->type,
+                    'internal_id' => $request->internal_id,
                     'breed' => $request->breed,
                     'age' => $request->age,
                     'weight' => $request->weight,
@@ -48,36 +53,22 @@ class PetController extends Controller
                     'description' => $request->description,
                     'vaccinated' => $request->vaccinated,
                     'pet_condition' => $request->pet_condition,
+                    'image' => $request->image,
+
+                    'event_title' => $request->title,
+                    'event_type' => EventType::Intake,
+                    'event_date' => date('Y-m-d'),
                 ]
             );
-            if ($request->has('image')) {
-                $petService->uploadImage($request->image);
-            }
         } catch (ValidationException $e) {
             return back()
                 ->withInput()
                 ->withErrors($e->validator);
         }
 
-        $pet = Pet::create($request->validated());
-        $pet->save();
-
-        //Create intake event
-        try {
-            $eventService->execute([
-                'title' => $request->title,
-                'type' => EventType::Intake,
-                'date' => date('d-m-Y'),
-                'pet_id' => $pet->id,
-                'user_id' => auth()->user()->id,
-                'pet_condition' => $request->pet_condition,
-            ]);
-        } catch (ValidationException $e) {
-            return back()
-                ->withInput()
-                ->withErrors($e->validator);
-        }
-        return redirect()->route('pets.index');
+        return redirect()->route('pets.index', [
+            'pet' => $pet
+        ]);
     }
 
     /**
@@ -99,13 +90,40 @@ class PetController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Pet $pet, PetService $petService)
+    public function update(Request $request, Pet $pet)
     {
-        if ($request->has('name')) {
-            $petService->updateName([
-                'pet_name' => $request->name,
-                'pet_id' => $pet->id
-            ]);
+        switch ($request->type) {
+            case 'name':
+                $this->petService->updateName([
+                    'pet_name' => $request->name,
+                    'pet_id' => $pet->id
+                ]);
+                break;
+            case 'image':
+                $this->petService->uploadImage([
+                    'image' => $request->image,
+                    'pet_id' => $pet->id
+                ]);
+                break;
+            case 'status':
+                $this->petService->updateStatus([
+                    'status' => $request->status,
+                    'pet_id' => $pet->id
+                ]);
+            case 'description':
+                $this->petService->updateDescription([
+                    'description' => $request->description,
+                    'pet_id' => $pet->id
+                ]);
+                break;
+            case 'location':
+                $this->petService->updateLocation([
+                    'location' => $request->location,
+                    'pet_id' => $pet->id
+                ]);
+
+            default:
+                break;
         }
     }
 

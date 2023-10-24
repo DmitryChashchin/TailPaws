@@ -8,10 +8,13 @@ use Illuminate\Support\Facades\Validator;
 
 abstract class BaseService
 {
-    protected array $rules = [];
+    public function rules(): array
+    {
+        return [];
+    }
     public function validate(array $data): bool
     {
-        Validator::make($data, $this->rules)
+        Validator::make($data, $this->rules())
             ->validate();
 
         return true;

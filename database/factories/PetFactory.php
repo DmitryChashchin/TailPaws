@@ -29,6 +29,7 @@ class PetFactory extends Factory
             'status' => fake()->randomElement(['Available', 'Adopted']),
             'vaccinated' => fake()->boolean(),
             'pet_condition' => 'Healthy',
+            'status' => \PetStatus::Pending
         ];
     }
 }

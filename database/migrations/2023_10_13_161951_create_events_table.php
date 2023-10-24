@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->foreignId('pet_id')->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('title');
-            $table->enum('type', ['intake', 'outcome', 'medical']);
+            $table->string('type');
             $table->string('date');
             $table->string('pet_condition');
             $table->timestamps();

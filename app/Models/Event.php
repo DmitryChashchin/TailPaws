@@ -22,17 +22,17 @@ class Event extends Model
     protected $casts = [
 
         'type' => EventType::class,
-        'date' => 'datetime:d-m-Y'
+        'date' => 'datetime:Y-m-d'
     ];
 
-    public function pet(): belongsTo
+    public function pet(): hasOne
     {
-        return $this->belongsTo(Pet::class);
+        return $this->hasOne(Pet::class);
     }
 
-    public function user(): belongsTo
+    public function user(): hasOne
     {
-        return $this->belongsTo(User::class);
+        return $this->hasOne(User::class);
     }
 
 

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use PetStatus;
 
 
 class Pet extends Model
@@ -22,28 +23,19 @@ class Pet extends Model
         'image',
         'vaccinated',
         'pet_condition',
-        ];
+        'status',
+        'behavior_id'
+    ];
 
 
-    public function Events(): hasMany
+    protected $casts = [
+
+        'type' => PetStatus::class,
+    ];
+
+    public function events(): belongsToMany
     {
-        return $this->hasMany(Event::class);
-    }
-
-    public function Adoption(): hasOne
-    {
-        return $this->hasOne(Adoption::class);
-    }
-
-
-    public function Adopter(): belongsTo
-    {
-        return $this->belongsTo(Adopter::class);
-    }
-
-    public function Organization(): belongsTo
-    {
-        return $this->belongsTo(Organization::class);
+        return $this->belongsToMany(Event::class);
     }
 
     public function petNames(): hasMany
@@ -51,5 +43,19 @@ class Pet extends Model
         return $this->hasMany(PetNames::class);
     }
 
+    public function notes(): hasMany
+    {
+        return $this->hasMany(Note::class);
+    }
 
+    public function behavior(): hasOne
+    {
+        return $this->hasOne(Behavior::class);
+    }
+
+    public function form(): BelongsTo
+    {
+        return $this->belongsTo(Form::class)
+            ->withDefault();
+    }
 }
